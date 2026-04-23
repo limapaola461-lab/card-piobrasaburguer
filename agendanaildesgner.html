@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nailê — Agenda da Nail Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --rose:     #f7c5d5;
+  --rose2:    #f0a0bc;
+  --rose3:    #e07098;
+  --blush:    #fde8f0;
+  --cream:    #fdf6f0;
+  --nude:     #f5e6d8;
+  --brown:    #7a4a5a;
+  --darkbrown:#4a2535;
+  --mauve:    #c07090;
+  --lilac:    #d4b0cc;
+  --white:    #fffaf8;
+  --shadow:   rgba(122,74,90,.13);
+  --r:        14px;
+  --r2:       22px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+
+body {
+  background: var(--cream);
+  color: var(--darkbrown);
+  font-family: 'Jost', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND PATTERN ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(247,197,213,.35) 0%, transparent 50%),
+    radial-gradient(circle at 85% 80%, rgba(212,176,204,.25) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(253,232,240,.2) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── FLOATING PETALS ── */
+.petal {
+  position: fixed;
+  width: 12px; height: 18px;
+  border-radius: 50% 50% 50% 0;
+  opacity: .18;
+  animation: floatPetal linear infinite;
+  pointer-events: none; z-index: 0;
+}
+@keyframes floatPetal {
+  0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+  10%  { opacity: .18; }
+  90%  { opacity: .18; }
+  100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+}
+
+/* ════════════
+   HEADER
+════════════ */
+header {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 52px 20px 36px;
+  border-bottom: 1px solid rgba(247,197,213,.5);
+  background: rgba(253,246,240,.85);
+  backdrop-filter: blur(12px);
+}
+.header-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--rose);
+  border-radius: 99px;
+  padding: 5px 16px;
+  font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--brown);
+  margin-bottom: 16px;
+}
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-weight: 700;
+  color: var(--darkbrown);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  margin-bottom: 8px;
+}
+h1 em {
+  font-style: italic;
+  color: var(--mauve);
+}
+.header-sub {
+  font-size: .88rem; color: var(--brown); opacity: .7;
+  font-weight: 300; letter-spacing: .04em;
+}
+
+/* ════════════
+   MAIN
+════════════ */
+.main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 36px 20px 80px;
+  position: relative; z-index: 1;
+}
+
+/* ── STATS ROW ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.stat {
+  background: var(--white);
+  border: 1px solid rgba(247,197,213,.6);
+  border-radius: var(--r2);
+  padding: 20px 22px;
+  text-align: center;
+  box-shadow: 0 4px 18px var(--shadow);
+  transition: transform .2s;
+}
+.stat:hover { transform: translateY(-2px); }
+.stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 700;
+  color: var(--mauve);
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--brown);
+  opacity: .65; margin-top: 5px; font-weight: 600;
+}
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 24px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border: 1px solid rgba(247,197,213,.55);
+  border-radius: var(--r2);
+  padding: 30px 28px;
+  box-shadow: 0 6px 28px var(--shadow);
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--rose2), var(--lilac), var(--rose3));
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--darkbrown);
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 9px;
+}
+.card-title .icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--blush);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+
+/* ── FORM ── */
+.f-group { margin-bottom: 16px; }
+.f-lbl {
+  display: block;
+  font-size: .7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--brown); opacity: .7;
+  margin-bottom: 7px;
+}
+.f-inp, .f-sel, .f-date {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--cream);
+  border: 1.5px solid rgba(192,112,144,.25);
+  border-radius: var(--r);
+  color: var(--darkbrown);
+  font-family: 'Jost', sans-serif; font-size: .92rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  appearance: none;
+}
+.f-inp:focus, .f-sel:focus, .f-date:focus {
+  border-color: var(--rose3);
+  box-shadow: 0 0 0 3px rgba(224,112,152,.12);
+  background: var(--white);
+}
+.f-inp::placeholder { color: rgba(122,74,90,.35); }
+
+/* select arrow */
+.sel-wrap { position: relative; }
+.sel-wrap::after {
+  content: '▾';
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--mauve); pointer-events: none; font-size: .75rem;
+}
+
+/* service grid */
+.service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.service-opt {
+  padding: 10px 12px;
+  border: 1.5px solid rgba(192,112,144,.25);
+  border-radius: var(--r);
+  background: var(--cream);
+  font-size: .82rem; font-weight: 500;
+  color: var(--brown);
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.service-opt .s-icon { font-size: 1.3rem; }
+.service-opt:hover { border-color: var(--rose3); background: var(--blush); }
+.service-opt.selected {
+  border-color: var(--rose3);
+  background: linear-gradient(135deg, var(--blush), rgba(224,112,152,.12));
+  color: var(--darkbrown);
+  box-shadow: 0 3px 12px rgba(224,112,152,.2);
+}
+
+/* two col row */
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* submit button */
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--rose3), var(--mauve));
+  border: none; border-radius: var(--r);
+  color: white;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s, filter .2s;
+  margin-top: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(192,112,144,.35);
+  filter: brightness(1.06);
+}
+.btn-submit:active { transform: translateY(0); }
+
+/* ── APPOINTMENTS LIST ── */
+.list-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.list-search {
+  position: relative; width: 200px;
+}
+.list-search input {
+  width: 100%; padding: 8px 14px 8px 34px;
+  background: var(--cream);
+  border: 1.5px solid rgba(192,112,144,.25);
+  border-radius: 99px;
+  font-size: .8rem; font-family: 'Jost', sans-serif;
+  color: var(--darkbrown); outline: none;
+  transition: border-color .2s;
+}
+.list-search input:focus { border-color: var(--rose3); }
+.list-search::before {
+  content: '🔍';
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: .75rem; pointer-events: none;
+}
+
+.appt-list {
+  max-height: 490px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.appt-list::-webkit-scrollbar { width: 4px; }
+.appt-list::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 4px; }
+
+.appt-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--r);
+  background: var(--cream);
+  border: 1.5px solid rgba(247,197,213,.5);
+  margin-bottom: 10px;
+  transition: transform .18s, border-color .2s, box-shadow .2s;
+  animation: slideIn .35s cubic-bezier(.34,1.3,.64,1) both;
+}
+.appt-item:hover {
+  transform: translateX(4px);
+  border-color: var(--rose2);
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.appt-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--rose), var(--lilac));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--darkbrown);
+  flex-shrink: 0;
+}
+
+.appt-info { flex: 1; min-width: 0; }
+.appt-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--darkbrown);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.appt-meta {
+  font-size: .74rem; color: var(--brown); opacity: .7;
+  margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.appt-meta span { display: flex; align-items: center; gap: 3px; }
+
+.appt-tag {
+  padding: 3px 10px; border-radius: 99px;
+  font-size: .68rem; font-weight: 600; letter-spacing: .06em;
+  background: var(--blush); color: var(--mauve);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.appt-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-del, .btn-wpp {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem;
+  transition: all .2s;
+}
+.btn-wpp { background: rgba(37,211,102,.12); color: #25d366; }
+.btn-wpp:hover { background: rgba(37,211,102,.25); transform: scale(1.1); }
+.btn-del { background: rgba(224,112,152,.12); color: var(--rose3); }
+.btn-del:hover { background: rgba(224,112,152,.25); transform: scale(1.1); }
+
+.empty-state {
+  text-align: center; padding: 50px 0;
+  color: var(--brown); opacity: .5;
+}
+.empty-state .e-icon { font-size: 3rem; margin-bottom: 10px; }
+.empty-state p { font-size: .88rem; }
+
+/* ── TOAST NOTIFICATION ── */
+.toast-wrap {
+  position: fixed; top: 24px; right: 24px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--white);
+  border: 1.5px solid rgba(247,197,213,.8);
+  border-radius: var(--r2);
+  padding: 16px 20px;
+  box-shadow: 0 10px 40px rgba(122,74,90,.2);
+  max-width: 320px;
+  display: flex; align-items: flex-start; gap: 12px;
+  animation: toastIn .4s cubic-bezier(.34,1.4,.64,1) both;
+  pointer-events: all;
+  position: relative; overflow: hidden;
+}
+.toast::before {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--rose3), var(--lilac));
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(30px) scale(.95); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(30px) scale(.95); }
+}
+.toast.hide { animation: toastOut .3s ease both; }
+.toast-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+.toast-body { flex: 1; }
+.toast-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-weight: 700; color: var(--darkbrown);
+  margin-bottom: 3px;
+}
+.toast-msg { font-size: .8rem; color: var(--brown); line-height: 1.5; }
+.toast-close {
+  background: none; border: none; cursor: pointer;
+  color: var(--brown); opacity: .4; font-size: 1rem;
+  padding: 0; transition: opacity .2s; flex-shrink: 0;
+}
+.toast-close:hover { opacity: 1; }
+.toast-progress {
+  position: absolute; bottom: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--rose3), var(--lilac));
+  border-radius: 99px;
+  animation: toastProgress 4s linear forwards;
+}
+@keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 750px) {
+  .grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr 1fr 1fr; }
+  .service-grid { grid-template-columns: 1fr 1fr; }
+  .row2 { grid-template-columns: 1fr; }
+  .list-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .list-search { width: 100%; }
+  .toast-wrap { right: 16px; left: 16px; }
+  .toast { max-width: 100%; }
+}
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:last-child { grid-column: 1 / -1; }
+  header { padding: 36px 20px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PETALS -->
+<div class="petal" style="left:8%;background:#f7c5d5;animation-duration:14s;animation-delay:0s;"></div>
+<div class="petal" style="left:22%;background:#d4b0cc;animation-duration:18s;animation-delay:3s;"></div>
+<div class="petal" style="left:55%;background:#f0a0bc;animation-duration:12s;animation-delay:6s;"></div>
+<div class="petal" style="left:73%;background:#f7c5d5;animation-duration:16s;animation-delay:1.5s;"></div>
+<div class="petal" style="left:90%;background:#d4b0cc;animation-duration:20s;animation-delay:8s;"></div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-badge">💅 Nail Designer</div>
+  <h1>Agenda <em>Encantada</em></h1>
+  <p class="header-sub">Gerencie seus agendamentos com charme e praticidade</p>
+</header>
+
+<main class="main">
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="stat-total">0</div>
+      <div class="stat-lbl">Agendamentos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-today">0</div>
+      <div class="stat-lbl">Hoje</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-week">0</div>
+      <div class="stat-lbl">Esta semana</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div class="card">
+      <div class="card-title">
+        <div class="icon">✨</div>
+        Novo Agendamento
+      </div>
+
+      <div class="f-group">
+        <label class="f-lbl">Nome da cliente</label>
+        <input class="f-inp" id="inp-name" type="text" placeholder="Ex: Maria Silva"/>
+      </div>
+
+      <div class="f-group">
+        <label class="f-lbl">Telefone (WhatsApp)</label>
+        <input class="f-inp" id="inp-phone" type="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)"/>
+      </div>
+
+      <div class="f-group">
+        <label class="f-lbl">Tipo de serviço</label>
+        <div class="service-grid" id="service-grid">
+          <div class="service-opt" onclick="selectService(this,'Gel')"><span class="s-icon">💎</span>Gel</div>
+          <div class="service-opt" onclick="selectService(this,'Fibra de Vidro')"><span class="s-icon">🔮</span>Fibra de Vidro</div>
+          <div class="service-opt" onclick="selectService(this,'Acrílico')"><span class="s-icon">✨</span>Acrílico</div>
+          <div class="service-opt" onclick="selectService(this,'Porcelana')"><span class="s-icon">🌸</span>Porcelana</div>
+          <div class="service-opt" onclick="selectService(this,'Manutenção')"><span class="s-icon">🛠️</span>Manutenção</div>
+          <div class="service-opt" onclick="selectService(this,'Esmaltação em Gel')"><span class="s-icon">💅</span>Esmaltação Gel</div>
+          <div class="service-opt" onclick="selectService(this,'Banho de Gel')"><span class="s-icon">🫧</span>Banho de Gel</div>
+          <div class="service-opt" onclick="selectService(this,'Nail Art')"><span class="s-icon">🎨</span>Nail Art</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="f-group">
+          <label class="f-lbl">Data</label>
+          <input class="f-inp f-date" id="inp-date" type="date"/>
+        </div>
+        <div class="f-group">
+          <label class="f-lbl">Horário</label>
+          <div class="sel-wrap">
+            <select class="f-sel" id="inp-time">
+              <option value="">Escolha</option>
+              <option>08:00</option><option>08:30</option>
+              <option>09:00</option><option>09:30</option>
+              <option>10:00</option><option>10:30</option>
+              <option>11:00</option><option>11:30</option>
+              <option>13:00</option><option>13:30</option>
+              <option>14:00</option><option>14:30</option>
+              <option>15:00</option><option>15:30</option>
+              <option>16:00</option><option>16:30</option>
+              <option>17:00</option><option>17:30</option>
+              <option>18:00</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label class="f-lbl">Observações</label>
+        <input class="f-inp" id="inp-obs" type="text" placeholder="Ex: cor desejada, design especial…"/>
+      </div>
+
+      <button class="btn-submit" onclick="addAppointment()">
+        💅 Confirmar Agendamento
+      </button>
+    </div>
+
+    <!-- LIST -->
+    <div class="card">
+      <div class="list-header">
+        <div class="card-title" style="margin-bottom:0">
+          <div class="icon">📋</div>
+          Agendamentos
+        </div>
+        <div class="list-search">
+          <input type="text" id="search-inp" placeholder="Buscar cliente…" oninput="filterList(this.value)"/>
+        </div>
+      </div>
+
+      <div class="appt-list" id="appt-list">
+        <div class="empty-state">
+          <div class="e-icon">🌸</div>
+          <p>Nenhum agendamento ainda.<br/>Adicione sua primeira cliente!</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ── DATA ──
+let appointments = JSON.parse(localStorage.getItem('nail_appts') || '[]');
+let selectedService = '';
+
+// ── INIT ──
+setTodayAsDefault();
+renderList(appointments);
+updateStats();
+
+function setTodayAsDefault() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('inp-date').value = today;
+  document.getElementById('inp-date').min = today;
+}
+
+// ── SERVICE SELECT ──
+function selectService(el, name) {
+  document.querySelectorAll('.service-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedService = name;
+}
+
+// ── PHONE MASK ──
+function maskPhone(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length <= 10) v = v.replace(/^(\d{2})(\d{4})(\d*)/, '($1) $2-$3');
+  else                v = v.replace(/^(\d{2})(\d{5})(\d*)/, '($1) $2-$3');
+  el.value = v;
+}
+
+// ── ADD ──
+function addAppointment() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const date  = document.getElementById('inp-date').value;
+  const time  = document.getElementById('inp-time').value;
+  const obs   = document.getElementById('inp-obs').value.trim();
+
+  if (!name)            { shakeField('inp-name');  toast('⚠️','Campo obrigatório','Informe o nome da cliente.'); return; }
+  if (!phone)           { shakeField('inp-phone'); toast('⚠️','Campo obrigatório','Informe o telefone.'); return; }
+  if (!selectedService) { toast('⚠️','Serviço não selecionado','Escolha o tipo de serviço.'); return; }
+  if (!date)            { shakeField('inp-date');  toast('⚠️','Campo obrigatório','Informe a data.'); return; }
+  if (!time)            { toast('⚠️','Campo obrigatório','Informe o horário.'); return; }
+
+  const appt = {
+    id: Date.now(),
+    name, phone,
+    service: selectedService,
+    date, time, obs,
+    createdAt: new Date().toISOString()
+  };
+
+  appointments.unshift(appt);
+  saveData();
+  renderList(appointments);
+  updateStats();
+  clearForm();
+
+  // Notification toast
+  toast('💅', `Agendamento confirmado!`,
+    `${name} — ${selectedService}\n📅 ${formatDate(date)} às ${time}`);
+
+  // WhatsApp message link (opens in new tab)
+  setTimeout(() => toastWpp(appt), 600);
+}
+
+// ── DELETE ──
+function deleteAppt(id) {
+  if (!confirm('Remover este agendamento?')) return;
+  appointments = appointments.filter(a => a.id !== id);
+  saveData();
+  renderList(appointments);
+  updateStats();
+  toast('🗑️', 'Removido', 'Agendamento excluído com sucesso.');
+}
+
+// ── WHATSAPP ──
+function openWhatsApp(appt) {
+  const num   = appt.phone.replace(/\D/g,'');
+  const br    = num.startsWith('55') ? num : '55' + num;
+  const msg   = encodeURIComponent(
+    `Olá ${appt.name}! 💅✨\n\nSeu agendamento foi confirmado!\n\n` +
+    `📌 Serviço: ${appt.service}\n` +
+    `📅 Data: ${formatDate(appt.date)}\n` +
+    `⏰ Horário: ${appt.time}\n` +
+    (appt.obs ? `📝 Obs: ${appt.obs}\n` : '') +
+    `\nAguardo você com muito carinho! 🌸`
+  );
+  window.open(`https://wa.me/${br}?text=${msg}`, '_blank');
+}
+
+function toastWpp(appt) {
+  const id = 'wpp-' + appt.id;
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.id = id;
+  el.innerHTML = `
+    <div class="toast-icon">📲</div>
+    <div class="toast-body">
+      <div class="toast-title">Enviar confirmação?</div>
+      <div class="toast-msg">Abrir WhatsApp para avisar <strong>${appt.name}</strong>?</div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button onclick="openWhatsApp(appointments.find(a=>a.id===${appt.id}));removeToast('${id}')"
+          style="padding:6px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;font-size:.8rem;font-family:'Jost',sans-serif;font-weight:600;cursor:pointer;">
+          📲 Abrir WhatsApp
+        </button>
+        <button onclick="removeToast('${id}')"
+          style="padding:6px 14px;border-radius:8px;border:1.5px solid rgba(192,112,144,.3);background:transparent;color:#7a4a5a;font-size:.8rem;font-family:'Jost',sans-serif;cursor:pointer;">
+          Agora não
+        </button>
+      </div>
+    </div>
+    <button class="toast-close" onclick="removeToast('${id}')">✕</button>
+  `;
+  wrap.appendChild(el);
+}
+
+// ── RENDER ──
+function renderList(list) {
+  const el = document.getElementById('appt-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">🌸</div><p>Nenhum agendamento ainda.<br/>Adicione sua primeira cliente!</p></div>`;
+    return;
+  }
+  const sorted = [...list].sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+  el.innerHTML = sorted.map(a => `
+    <div class="appt-item">
+      <div class="appt-avatar">${a.name.charAt(0).toUpperCase()}</div>
+      <div class="appt-info">
+        <div class="appt-name">${esc(a.name)}</div>
+        <div class="appt-meta">
+          <span>📅 ${formatDate(a.date)}</span>
+          <span>⏰ ${a.time}</span>
+          <span>📞 ${esc(a.phone)}</span>
+          ${a.obs ? `<span>📝 ${esc(a.obs)}</span>` : ''}
+        </div>
+      </div>
+      <div class="appt-tag">${esc(a.service)}</div>
+      <div class="appt-actions">
+        <button class="btn-wpp" onclick='openWhatsApp(${JSON.stringify(a).replace(/'/g,"\\'")})'  title="Enviar WhatsApp">📲</button>
+        <button class="btn-del" onclick="deleteAppt(${a.id})" title="Remover">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── FILTER ──
+function filterList(q) {
+  const filtered = q
+    ? appointments.filter(a => a.name.toLowerCase().includes(q.toLowerCase()) || a.service.toLowerCase().includes(q.toLowerCase()))
+    : appointments;
+  renderList(filtered);
+}
+
+// ── STATS ──
+function updateStats() {
+  const today = new Date().toISOString().split('T')[0];
+  const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const ws = weekStart.toISOString().split('T')[0];
+
+  document.getElementById('stat-total').textContent = appointments.length;
+  document.getElementById('stat-today').textContent = appointments.filter(a => a.date === today).length;
+  document.getElementById('stat-week').textContent  = appointments.filter(a => a.date >= ws).length;
+}
+
+// ── TOAST ──
+function toast(icon, title, msg) {
+  const id   = 'toast-' + Date.now();
+  const wrap = document.getElementById('toast-wrap');
+  const el   = document.createElement('div');
+  el.className = 'toast';
+  el.id = id;
+  el.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${msg.replace(/\n/g,'<br>')}</div>
+    </div>
+    <button class="toast-close" onclick="removeToast('${id}')">✕</button>
+    <div class="toast-progress"></div>
+  `;
+  wrap.appendChild(el);
+  setTimeout(() => removeToast(id), 4000);
+}
+
+function removeToast(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('hide');
+  setTimeout(() => el.remove(), 320);
+}
+
+// ── HELPERS ──
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function shakeField(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = '#e07098';
+  el.animate([{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:200,iterations:2});
+  setTimeout(() => el.style.borderColor = '', 800);
+}
+function saveData() {
+  localStorage.setItem('nail_appts', JSON.stringify(appointments));
+}
+function clearForm() {
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-obs').value = '';
+  document.getElementById('inp-time').value = '';
+  document.querySelectorAll('.service-opt').forEach(o => o.classList.remove('selected'));
+  selectedService = '';
+  setTodayAsDefault();
+}
+
+// ── KEYBOARD ──
+document.getElementById('inp-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('inp-phone').focus(); });
+</script>
+</body>
+</html>
